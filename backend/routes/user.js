@@ -1,6 +1,6 @@
 // Express 모듈 불러오기
 const express = require("express");
-
+const requireAuth = require("../middlewares/auth");
 // Express의 Router 기능 사용 (라우터 분리용)
 const router = express.Router();
 
@@ -190,6 +190,25 @@ router.delete("/delete/:userId", async (req, res) => {
     res.status(500).json({ message: "서버 오류 발생", error });
   }
 });
+
+
+router.get("/me", requireAuth, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.userId).select("-password");
+    if (!user) return res.status(404).json({ message: "사용자 없음" });
+    if (!user.isActive) return res.status(401).json({ message: "비활성 계정" });
+
+    // 이미 로그인 중 제약을 유지하려면(다중 접속 차단)
+    if (!user.isLoggedIn) {
+      return res.status(401).json({ message: "로그인 필요" });
+    }
+
+    res.json({ user });
+  } catch (e) {
+    res.status(500).json({ message: "서버 오류" });
+  }
+});
+
 
 
 
