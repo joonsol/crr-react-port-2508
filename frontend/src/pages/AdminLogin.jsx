@@ -1,12 +1,17 @@
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import axios from "axios"
 
 const AdminLogin = () => {
+
+    const nav = useNavigate()
+    const API = import.meta.env.VITE_API_URL
     const [formData, setFormData] = useState({
         username: "",
         password: ""
     })
 
-    const hadleChange = (e) => {
+    const handleChange = (e) => {
         setFormData({
             ...formData,
             [e.target.name]: e.target.value
@@ -17,13 +22,12 @@ const AdminLogin = () => {
     const handleSubmit = async (e) => {
         e.preventDefault()
         try {
-            const response = await axios.post(
-                `${import.meta.env.VITE_API_URL}/api/auth/login`,
+            const response = await axios.post(`${API}/api/auth/login`,
                 formData, {
                 withCredentials: true,
             })
             if (response.data.user) {
-                naviagate("/admin/posts")
+                nav("/admin/posts")
             }
         } catch (error) {
             const errorMessage = error.response.data.message || "로그인에 실패"
@@ -53,7 +57,7 @@ const AdminLogin = () => {
                             required
                             placeholder="관리자 아이디"
                             value={formData.username}
-                            onChange={hadleChange}
+                            onChange={handleChange}
                         />
                     </div>
                     <div className="form-field">
@@ -65,7 +69,7 @@ const AdminLogin = () => {
                             required
                             placeholder="관리자 비밀번호"
                             value={formData.password}
-                            onChange={hadleChange}
+                            onChange={handleChange}
                         />
                     </div>
                 </div>
