@@ -6,5 +6,14 @@ export default defineConfig({
   plugins: [react()],
   css:{
     devSourcemap:true
-  }
+  },
+   server: {
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3000', // 백엔드
+        changeOrigin: true,
+        secure: false,
+      },
+    },
+  },
 })

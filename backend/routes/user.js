@@ -1,6 +1,6 @@
 // Express 모듈 불러오기
 const express = require("express");
-const requireAuth = require("../middlewares/auth");
+
 // Express의 Router 기능 사용 (라우터 분리용)
 const router = express.Router();
 
@@ -10,7 +10,7 @@ const axios = require("axios");
 const jwt = require("jsonwebtoken")
 // Mongoose 사용자 모델 불러오기
 const User = require("../models/User");
-
+const requireAuth = require('../middlewares/auth');
 
 // POST /signup : 회원가입 처리 라우트
 router.post("/signup", async (req, res) => {
@@ -164,13 +164,7 @@ router.post("/logout", async (req, res) => {
   }
 });
 
-// ================================================
-//  DELETE /delete/:userId  ── 사용자 삭제 API
-// ================================================
-// • 전달받은 userId를 기준으로 해당 사용자 삭제
-// • 존재하지 않으면 404 응답
-// • 성공 시 삭제 완료 메시지 반환
-// ================================================
+
 
 router.delete("/delete/:userId", async (req, res) => {
   try {
@@ -186,31 +180,22 @@ router.delete("/delete/:userId", async (req, res) => {
     res.json({ message: "사용자가 성공적으로 삭제되었습니다." });
 
   } catch (error) {
-    // 4. 서버 에러 발생 시 500 응답 + 에러 객체 포함
+    // 4. 서버 에러 발생 시 500 응답 에러 객체 포함
     res.status(500).json({ message: "서버 오류 발생", error });
   }
 });
-
 
 router.get("/me", requireAuth, async (req, res) => {
   try {
     const user = await User.findById(req.user.userId).select("-password");
     if (!user) return res.status(404).json({ message: "사용자 없음" });
     if (!user.isActive) return res.status(401).json({ message: "비활성 계정" });
-
-    // 이미 로그인 중 제약을 유지하려면(다중 접속 차단)
-    if (!user.isLoggedIn) {
-      return res.status(401).json({ message: "로그인 필요" });
-    }
-
+    if (!user.isLoggedIn) return res.status(401).json({ message: "로그인 필요" });
     res.json({ user });
-  } catch (e) {
+  } catch {
     res.status(500).json({ message: "서버 오류" });
   }
 });
-
-
-
 
 // 이 라우터를 외부에서 사용할 수 있도록 내보내기
 module.exports = router;

@@ -9,6 +9,12 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+app.use(cors({
+  origin: process.env.FRONT_ORIGIN, // http://localhost:5173
+  credentials: true,
+}));
+
+
 app.use(cookieParser());
 
 
@@ -17,18 +23,12 @@ app.use(express.urlencoded());
 
 
 // CORS
-app.use(cors({
-  origin: process.env.FRONT_ORIGIN, // http://localhost:5173
-  credentials: true,
-}));
 
 
 // 라우트 마운트 (현재 user.js를 인증 라우트로 사용)
 const authRoutes = require("./routes/user");
 app.use("/api/auth", authRoutes);
 
-// 보호 라우트 예시 (원하면 나중에 실제 라우터로 교체)
-const requireAuth = require("./middlewares/auth");
 
 app.get("/", (req,res) => {
     res.send("Hello, world");
