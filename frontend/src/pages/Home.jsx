@@ -8,12 +8,15 @@ import Footer from '../components/Footer'
 const Home = () => {
   return (
     <div>
-        <Header/>
-        <Aboutme/>
-        <Hero/>
-        <Work/>
-        <Contact/>
-        <Footer/>
+      <Header />
+      <main>
+        <section id="hero"><Hero /></section>
+        <section id="about"><Aboutme /></section>
+        <section id="work"><Work /></section>
+        <section id="contact"><Contact /></section>
+      </main>
+
+      <Footer />
     </div>
   )
 }
