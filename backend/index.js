@@ -20,10 +20,16 @@ app.use(cookieParser());
 
 app.use(express.json());
 app.use(express.urlencoded());
-
+app.use(cors({
+  origin: process.env.FRONT_ORIGIN,
+  credentials: true,
+}));
 
 // CORS
-
+// app.options('*', cors({
+//   origin: process.env.FRONT_ORIGIN,
+//   credentials: true,
+// }));
 
 // 라우트 마운트 (현재 user.js를 인증 라우트로 사용)
 const authRoutes = require("./routes/user");
